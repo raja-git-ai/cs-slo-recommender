@@ -9,6 +9,7 @@ async def get_graph():
     # Fetch all nodes and relationships for visualization
     query = """
     MATCH (s:Service)-[r:DEPENDS_ON]->(t:Service)
+    WHERE s.name <> 'Frontend' AND t.name <> 'Frontend'
     RETURN s.name as source, t.name as target, r.criticality as criticality,
            s.type as source_type, s.tier as source_tier,
            t.type as target_type, t.tier as target_tier
@@ -18,7 +19,7 @@ async def get_graph():
     # But for a robust graph, let's just get unique nodes from the rels for now or do two queries.
     
     # Let's do two queries to be safe
-    nodes_query = "MATCH (n:Service) RETURN n.name as name, n.type as type, n.tier as tier"
+    nodes_query = "MATCH (n:Service) WHERE n.name <> 'Frontend' RETURN n.name as name, n.type as type, n.tier as tier"
     
     with neo4j_service.driver.session() as session:
         nodes_result = session.run(nodes_query)

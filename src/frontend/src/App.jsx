@@ -86,6 +86,7 @@ function App() {
       <div className="right-panel">
         <h3>Service Topology</h3>
         <div className="graph-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffffff' }}>
+
           <ForceGraph2D
             graphData={graphData}
             nodeLabel="id"
@@ -94,7 +95,69 @@ function App() {
             linkDirectionalArrowRelPos={1}
             linkColor={() => '#999999'}
             linkWidth={1.5}
-            nodeRelSize={6}
+            nodeCanvasObject={(node, ctx, globalScale) => {
+              const label = node.id;
+              const fontSize = 12 / globalScale;
+              ctx.font = `${fontSize}px Sans-Serif`;
+
+              // Determine color based on group (1=Service, 2=Database)
+              const color = node.group === 2 ? '#ef4444' : '#3b82f6'; // Red for DB, Blue for Service
+
+              // Draw Node Circle
+              ctx.beginPath();
+              ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
+              ctx.fillStyle = color;
+              ctx.fill();
+
+              // Draw Text Label Background
+              const textWidth = ctx.measureText(label).width;
+              const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2);
+
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+              ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y + 8, ...bckgDimensions);
+
+              // Draw Text Label
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillStyle = '#1f2937';
+              ctx.fillText(label, node.x, node.y + 8 + fontSize / 2);
+            }}
+            linkCanvasObjectMode={() => 'after'}
+            linkCanvasObject={(link, ctx, globalScale) => {
+              const start = link.source;
+              const end = link.target;
+
+              // Only draw if we have coordinates
+              if (typeof start !== 'object' || typeof end !== 'object') return;
+
+              const textPos = Object.assign({}, ...['x', 'y'].map(c => ({
+                [c]: start[c] + (end[c] - start[c]) / 2
+              })));
+
+              const label = 'calls';
+              const fontSize = 10 / globalScale;
+              ctx.font = `${fontSize}px Sans-Serif`;
+
+              ctx.save();
+              ctx.translate(textPos.x, textPos.y);
+              // Calculate angle
+              const angle = Math.atan2(end.y - start.y, end.x - start.x);
+              ctx.rotate(angle);
+
+              // Draw Label Background
+              const textWidth = ctx.measureText(label).width;
+              const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2);
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+              ctx.fillRect(-bckgDimensions[0] / 2, -bckgDimensions[1] / 2, ...bckgDimensions);
+
+              // Draw Label Text
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillStyle = '#6b7280';
+              ctx.fillText(label, 0, 0);
+
+              ctx.restore();
+            }}
           />
         </div>
       </div>
