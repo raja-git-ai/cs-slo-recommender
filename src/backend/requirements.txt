@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+neo4j
+chromadb
+ollama
+pydantic
+python-dotenv
+requests
+pandas
