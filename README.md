@@ -22,6 +22,7 @@ An AI-driven system to recommend Service Level Objectives (SLOs) based on micros
 ## Documentation
 
 -   [Architecture & System Design](documents/architecture.md)
+-   [Architecture & System Design - Diagram](documents/ArchDesign/CrowdStrikeSLORecommendation.png)
 
 ## Setup & Run
 
