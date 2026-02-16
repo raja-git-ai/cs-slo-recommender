@@ -181,3 +181,7 @@ cython_debug/
 .cursorindexingignore
 
 .documents/assignment
+
+# Generated Data
+chroma_db/
+metrics.db
