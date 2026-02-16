@@ -207,7 +207,8 @@ def generate_sqlite_data():
                     val *= 1.5
                     
                 # Specific service anomalies
-                if service["name"] == "PaymentService" and (14 <= time_hour <= 15):
+                # Make PaymentService slow in the last 4 hours for DEMO purposes
+                if service["name"] == "PaymentService" and (time_hour >= end_time.hour - 4 or (14 <= time_hour <= 15)):
                     val += 200 # Latency spike
                     
                 if service["name"] == "RedisCache" and (time_hour % 6 == 0):
