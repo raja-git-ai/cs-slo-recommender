@@ -47,30 +47,37 @@ class LLMService:
         except Exception as e:
             return f"Error generating recommendation: {str(e)}. Ensure Ollama is running."
 
-    def chat_with_context(self, service_data: Dict[str, Any], dependencies: List[Dict[str, Any]], runbooks: List[str], metrics: List[Dict[str, Any]], messages: List[Dict[str, str]]) -> str:
+    def chat_with_context(self, service_data: Dict[str, Any], dependencies: List[Dict[str, Any]], upstream_dependencies: List[Dict[str, Any]], runbooks: List[str], metrics: List[Dict[str, Any]], messages: List[Dict[str, str]]) -> str:
         
         # System context
         system_context = f"""
-        You are an expert SRE assistant helping a user with SLO recommendations.
+        You are an expert SRE assistant helping a user with SLO recommendations and Blast Radius Analysis.
         
-        **Service Context**:
+        **Target Service Context**:
         - Name: {service_data.get('name')}
         - Type: {service_data.get('type')}
         - Tier: {service_data.get('tier')}
 
-        **Dependencies**:
+        **Downstream Dependencies (Fan-Out/Dependencies)**:
+        (Services called by {service_data.get('name')})
         {dependencies}
 
-        **Historical Metrics (Last 24h Summary)**:
-        {metrics[:5]} ... (truncated)
+        **Upstream Dependencies (Fan-In/Callers)**:
+        (Services that call {service_data.get('name')})
+        {upstream_dependencies}
+
+        **Live Metrics Snapshot (Last 3 hours)**:
+        (Includes metrics for Target Service AND its Upstream/Downstream neighbors)
+        {metrics}
         
         **Relevant Runbooks**:
         {self._format_runbooks(runbooks)}
         
-        **Instructions**:
-        - Answer the user's follow-up questions based on the provided context.
-        - If the user asks to adjust the SLO, analyze the impact based on metrics.
-        - Be concise and helpful.
+        **Key Instructions for Blast Radius Analysis**:
+        1. **Fan-In Analysis**: If the target service is failing, identify which Upstream callers might be impacted (e.g., "CheckoutService calls PaymentService, so Checkout might fail").
+        2. **Fan-Out Analysis**: If the target service has high latency, check its Downstream dependencies. Is a database or another service slow?
+        3. **Isolate the Fault**: Use the provided metrics to pinpoint the root cause. If `UserDB` latency is normal but `PaymentService` is slow, the issue is likely within `PaymentService` itself.
+        4. **Be Precise**: Cite specific metric values (e.g., "UserDB latency is only 5ms, so it's unlikely the bottleneck").
         """
 
         # Construct message history for Ollama
