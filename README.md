@@ -21,10 +21,12 @@ An AI-driven system to recommend Service Level Objectives (SLOs) based on micros
 
 ## Documentation
 
--   [Code Architecture & Flow](documents/ArchDesign/architecture.md)
+-   [Code Architecture & Flow Explained](documents/ArchDesign/architecture.md)
 -   [Architecture & System Design - Diagram](documents/ArchDesign/SLORecommendation.png)
+-   [Architecture & System Design - Draw.io file](documents/ArchDesign/SLORecommendation.drawio)
 -   [Architecture & System Design - Explanation](documents/Documentation/ArchExplanation.md)
 -   [Code Flow Diagram](documents/ArchDesign/codeflow.png)
+-   
 
 ## Setup & Run
 
