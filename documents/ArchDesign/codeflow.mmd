@@ -1,0 +1,58 @@
+graph TD
+    User([User]) -->|Interacts| Frontend[React Frontend]
+
+    subgraph "Frontend Layer"
+        Frontend
+    end
+
+    subgraph "Backend Layer (FastAPI)"
+        API[API Router]
+        Orchestrator[SLO Orchestrator]
+        ChatAgent[Chat Agent]
+        
+        Frontend -->|HTTP Requests| API
+        API -->|Get Recommendation| Orchestrator
+        API -->|Chat Query| ChatAgent
+    end
+
+    subgraph "Data Layer"
+        Neo4j[(Neo4j Graph DB)]
+        note1[Stores Service Topology & Dependencies]
+        
+        SQLite[(SQLite Metrics DB)]
+        note2[Stores Time-Series Metrics]
+        
+        Chroma[(Chroma Vector DB)]
+        note3[Stores RAG Embeddings/Runbooks]
+    end
+
+    subgraph "AI / LLM Layer"
+        Ollama{{Ollama / LLM}}
+    end
+
+    %% Relationships
+    Orchestrator -->|Query Topology| Neo4j
+    Orchestrator -->|Fetch Metrics| SQLite
+    Orchestrator -->|Retrieve Context| Chroma
+    
+    ChatAgent -->|Query Topology| Neo4j
+    ChatAgent -->|Fetch Multi-Service Metrics| SQLite
+    ChatAgent -->|Retrieve Relevant Runbooks| Chroma
+
+    Orchestrator -->|Aggregated Context| Ollama
+    ChatAgent -->|Chat History + Context| Ollama
+
+    Ollama -->|SLO Recommendation| Orchestrator
+    Ollama -->|Chat Response| ChatAgent
+
+    %% Blast Radius Logic
+    ChatAgent -.->|Analyze Upstream/Downstream| Neo4j
+    
+    %% Styling
+    classDef service fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef db fill:#3b82f6,stroke:#333,stroke-width:2px,color:white;
+    classDef llm fill:#10b981,stroke:#333,stroke-width:2px,color:white;
+    
+    class Frontend,API,Orchestrator,ChatAgent service;
+    class Neo4j,SQLite,Chroma db;
+    class Ollama llm;
