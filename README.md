@@ -61,5 +61,8 @@ Visit `http://localhost:5174` to use the application.
 3.  View the generated SLOs, reasoning, and relevant runbooks.
 4.  Explore the service topology in the graph view.
 
-<img width="1189" height="1233" alt="SLORecommendation" src="https://github.com/user-attachments/assets/24ad7a69-abe9-4e7a-9242-b54b79645719" />
+
+
+https://github.com/user-attachments/assets/13406842-48c0-415c-b831-3600e837b728
+
 
