@@ -61,4 +61,4 @@ Visit `http://localhost:5174` to use the application.
 3.  View the generated SLOs, reasoning, and relevant runbooks.
 4.  Explore the service topology in the graph view.
 
-<video src="documents/ArchDesign/SLOGenAppInAction.mp4" width="400" controls></video>
+![App Demo](documents/ArchDesign/SLOGenAppInAction.mp4)
