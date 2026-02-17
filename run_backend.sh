@@ -27,11 +27,12 @@ fi
 PROJECT_ROOT=$(cd ../.. && pwd)
 export PYTHONPATH=$PROJECT_ROOT
 
-echo "Generating/Refreshing Data..."
-python scripts/generate_data.py
-
 # Start Backend
 echo "Starting FastAPI Backend..."
-# Run from Project Root to ensure imports like 'src.backend.main' work
+# Run from Project Root to ensure imports like 'src.backend.main' work and paths in .env are consistent
 cd $PROJECT_ROOT
+
+echo "Generating/Refreshing Data..."
+python src/backend/scripts/generate_data.py
+
 uvicorn src.backend.main:app --reload --host 0.0.0.0 --port 8000
